@@ -1,0 +1,92 @@
+In a general gradient descent algorithm, the updating rule is follows:
+\begin{align*}
+x_{t+1} = x_t - \eta_t g_t, 
+\end{align*} 
+where $\eta_t$ is step length and $g_t$ is gradient. The following two changes are proposed when updating for large batch training:
+\begin{enumerate}
+    \item substitute $g_t$ with $g_t/\|g_t\|$ 
+    \item adjust the learning rate from $\eta_t$ to $\eta_t\phi(\|x_t\|)$
+\end{enumerate}
+Then the new updating rule is:
+\begin{align*}
+x_{t+1}^{(i)} = x_t^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|g_t^{(i)}\|}g_t^{(i)}, 
+\end{align*}
+for all layers $i$. The normalization is done layer-wise instead of globally. 
+Based on the new updating rule three algorithms will be discussed below: LARS, LAMB and NVLAMB.
+\subsection*{ADAM optimizer}
+First let us take a look at the ADAM optimizer. It introduces exponential moving average on the first and second order of the gradient:
+\begin{align*}
+m_{t} = \beta_{1}m_{t-1}+(1-\beta_{1})g_{t} \\
+v_{t} = \beta_{1}v_{t-1}+(1-\beta_{1})g_{t}^2
+\end{align*}
+Then there is a bias correction step:
+\begin{align*}
+\hat{m}_{t}=\frac{m_t}{1-\beta_1^t} \\
+\hat{v}_{t}=\frac{v_t}{1-\beta_2^t}
+\end{align*}
+
+\begin{minipage}[b]{.48\textwidth}
+\begin{algorithm}[H]\small
+	\caption{$ADAM$}
+	\label{alg:adam}
+	\begin{algorithmic}
+		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1}, \beta_{2} < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE Set $m_{0} = 0, v_{0} = 0$
+		\FOR{$t=1$ {\bfseries to} $T$}
+		\STATE Draw b samples $S_t$ from $\mathbb{P}$
+		\STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
+        \STATE $m_{t} = \beta_{1}m_{t-1}+(1-\beta_{1})g_{t}$
+        \STATE $v_{t} = \beta_{1}v_{t-1}+(1-\beta_{1})g_{t}^2$
+        \STATE $\hat{m}_{t}={m_t}/(1-\beta_1^t)$
+        \STATE $\hat{v}_{t}={v_t}/(1-\beta_2^t)$
+        \STATE $x_{t+1}^{(i)} = x_{t}^{(i)}-\eta_t\frac{\hat{m}_t}{\hat{v}_t+\epsilon}$ for all $i \in [h]$
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+\end{minipage}\hfill%
+
+\subsection*{LARS optimizier}
+
+\begin{minipage}[b]{.48\textwidth}
+\begin{algorithm}[H]\small
+	\caption{$LARS$}
+	\label{alg:lars}
+	\begin{algorithmic}
+		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1} < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE Set $m_{0} = 0$
+		\FOR{$t=1$ {\bfseries to} $T$}
+		\STATE Draw b samples $S_t$ from $\mathbb{P}$
+        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
+        \STATE $m_{t} = \beta_{1} m_{t-1} + (1 - \beta_{1}) (g_{t} + \lambda x_t)$
+		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|m_t^{(i)}\|} m_t^{(i)}$ for all $i \in [h]$
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+\end{minipage}\hfill%
+
+\subsection*{LAMB optimizier}
+The lamb algorithm uses ADAM as base algorithm, it makes the following adjustments:
+\begin{enumerate}
+    \item Using the square root of second moment for normalization
+    \item Adopting layer-wise normalization
+\end{enumerate}
+\begin{minipage}[b]{.5\textwidth}
+\begin{algorithm}[H]\small
+	\caption{$LAMB$}
+	\label{alg:lamb}
+	\begin{algorithmic}
+		\STATE {\bf Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$,  parameters $0 < \beta_{1}, \beta_2 < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE Set $m_{0} = 0$, $v_{0} = 0$
+		\FOR{$t=1$ {\bf to} $T$}
+		\STATE Draw b samples $S_t$ from $\mathbb{P}$.
+        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$.
+		\STATE  $m_{t} = \beta_{1} m_{t-1} + (1 - \beta_{1}) g_{t}$ 
+		\STATE  $v_{t} = \beta_{2} v_{t-1} + (1 - \beta_{2}) g_{t}^2$
+		\STATE $m_t = m_t/(1 - {\beta}_1^t)$ 
+        \STATE $v_t = v_t/(1 - {\beta}_2^t)$
+		\STATE Compute ratio $r_t = \frac{m_t}{\sqrt{v_t} + \epsilon}$
+		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|r_t^{(i)} + \lambda x_t^{(i)}\|} (r_t^{(i)} + \lambda x_t^{(i)})$
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+\end{minipage}

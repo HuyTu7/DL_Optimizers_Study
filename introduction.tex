@@ -1,0 +1,50 @@
+Deep neural networks typically have a large upfront cost associated with computational power and training dataset size. Even with modern training optimization algorithms such as Stochastic Gradient Descent~\cite{SGD}, training cost poses the biggest obstacle to achieving higher test accuracy. The advent GPU-based parallel processing has contributed the greatest to surpassing this obstacle, allowing previously impractical networks to become possible. For instance, training state-of-the-art NN's like BERT~\cite{bert} and ResNet-50~\cite{resnet} were able to be done in 3 days and 29 hours, respectively. This feat was not possible even with the largest scale server processors before the beginning of this decade. 
+
+Recent research in lowering training cost has been focused on optimizing the actual mathematical calculations during the process. This can include varying hyperparameters during the course of training, such as the learning weight, pruning perceptrons, or by normalizing gradients at each update step. Perhaps the largest leaps in this area can be attributed to the use of first and second moments of the gradient to increase layer-update effectiveness. Popular optimizers like Adam incorporate adaptive learning rates and second moments in efforts to better capture the data from input data. More advanced algorithms such as LAMB~\cite{You2020Large}, LARS~\cite{qian2020impact, ginsburg2018large}, or NVLAMB~\cite{nvidia_nvlamb}  take this mentality several steps further and apply varying normalization across varying layers. This paper shall investigate, compare, and implement these innovative optimization techniques in relation to deep NN's in the NLP or Image Processing domain. 
+
+Image classification is a process of labeling and categorizing pictures. When doing image classification a convolutional neural network is often used to reduce input size. With the repetitive convolution and pooling layers the network can be really deep. Training a deep CNN network with certain optimiziers can be very time consuming. By using the LAMB or LARS optimiziers, we expect to see a decrease in training time without the loss of accuracy.
+
+Speech-to-text is a process of transferring audio signals into readable texts. Popular applications like Amazon’s Alexa, Apple’s Siri, Google’s Google Assistant and Microsoft’s Cortana all uses the most updated speech-to-text techniques. Most updated speech recognition algorithms is based on Hidden Markov Model(HMM). Under this model the speech signal is divided into milliseconds chunks. Speech recognition algorithms are very computationally expensive and a more advanced optimizier like LAMB could reduce training time.
+
+Question Answering(QA) system belongs to the category of information retrieval. QA system consists of three parts: question classification, information retrieval and answer extraction. A LSTM network with attention mechanism is often used in the QA system. As the vocabulary and embedding size increases the training time can be very long.\\
+
+
+
+
+
+
+\begin{table}[!t]
+\vspace{-15pt}
+\scriptsize
+\vspace{7pt}
+\caption{Plan of project work.}\label{tbl:planofwork}
+\vspace{-15pt}
+\begin{center}
+\begin{tabular}{ l|c|l}
+  \multicolumn{1}{c|}{Standard} &
+ \multicolumn{1}{c|}{Date} &
+ \multicolumn{1}{c}{Responsibilities}\\
+ %& & \\
+\hline
+& & We will research necessary papers and  \\
+ Literature Review & 9/07 - 9/25 &  contribute information to address how the  \\
+ & &  problem relates to the group's interests. \\\hline
+& & Each of us will propose appropriate \\
+Experiment Setup & 	09/25 - 10/02 & application, setting, and dataset for this\\
+& &  project's direction.\\\hline
+& & We will delegate coding parts based off of \\
+Implementation & 10/02 - 10/16  & each individual's strength (e.g. each optimizer \\
+& & per individual group member) \\\hline
+& & We will share the exploration of applicable \\
+Mathematical and & 10/16 - 10/30 &  theories (e.g. LARS \& LAMB) while \\ 
+Result Analysis & &	  evaluate the results deeply in regards to  \\
+& & the problem's context\\\hline
+& & Each of us will help report background \\
+Documentation & 10/30 - 11/13 &  theories, outcomes, discussion, and possible\\
+& &  future directions. \\
+
+
+\end{tabular}
+\end{center}
+\vspace{-15pt}
+\end{table}

@@ -1,0 +1,142 @@
+\pdfoutput=1
+
+\documentclass[conference,10pt]{IEEEtran} 
+
+\IEEEoverridecommandlockouts
+
+%\usepackage{draftwatermark}
+%\SetWatermarkText{Draft}
+\usepackage{balance}
+\setcounter{tocdepth}{3}
+\usepackage{cite}
+\usepackage[numbers]{natbib}
+
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage[skins]{tcolorbox}
+\usepackage{dblfloatfix}  
+\usepackage{colortbl}
+\usepackage{arydshln}
+\usepackage{times}
+\usepackage{rotating}
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usetikzlibrary{angles}
+\usepackage{makecell}
+\usepackage{tabu}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{framed} 
+\usepackage{newtxtext,newtxmath,amsmath}
+\usepackage{cleveref}
+
+\usepackage[framemethod=tikz]{mdframed}
+\usetikzlibrary{shadows}
+\usepackage{graphics}
+
+\date{September 2020}
+
+\begin{document}
+
+\title{Layer-wise Adaptive Learning Rates Training}
+
+
+\author{\IEEEauthorblockN{Noah Lozevski}
+\IEEEauthorblockA{NC State University\\Raleigh, USA\\nlozevs@ncsu.edu}
+\and
+\IEEEauthorblockN{Huy Tu}
+\IEEEauthorblockA{NC State University\\Raleigh, USA\\hqtu@ncsu.edu}
+\and
+\IEEEauthorblockN{Xianyang Wang}
+\IEEEauthorblockA{NC State University\\Raleigh, USA\\xwang232@ncsu.edu}
+}
+
+\IEEEaftertitletext{\vspace{-2\baselineskip}}
+
+\markboth{IEEE Conference on Machine Learning}%
+{Tu \MakeLowercase{\textit{et al.}}: Large Batch Training of Convolutional Networks
+for IEEE Journals}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+\IEEEpeerreviewmaketitle
+
+
+
+\begin{abstract}
+There is a direct relationship between a machine learning model's number of parameters and potential training time. This poses a large problem, as the first step taken to improve existing models is typically to increase the number of inputs/parameters. It is believed that these extra variables allow neural networks (NN) to better capture the latent data of the physical phenomena being studied. In the case of artificial neural networks, this is usually done by adding extra hidden layers or by increasing the resolution of the input. Breakthroughs in raw computational power have allowed many modern NN's to grow to a previously insurmountable size, some even containing 340 million parameters (XLNet). Even with the fastest GPU's available, this process still takes time and is a major hindrance in the research process. This high upfront cost (reaching over \$500,000 occasionally) has thus driven further research into optimizing the training process, rather than trying to develop faster hardware.
+
+Most of the improvements in the effectiveness of the training process can be attributed to the advancement of stochastic gradient descent (SGD). These improved algorithms incorporate more information than just the gradient of the cost function, such as the first or second moments. Normalization techniques to account for training data variance also has been integrated, such as in the popular LARS, LAMB, or NVLAMB algorithms. These algorithms have allowed larger batch sizes (with similar test performance) at a fraction of the training time. Although the aforementioned algorithms derived from LARS have typically been focused on performance improvements in large-scale NN's, this paper aims to investigate their effectiveness in more challenging scenarios including but not limited to low training data situations, few-shot learning, and fine-tuning of transformer-based NLP models.
+\end{abstract}
+
+\begin{IEEEkeywords}
+LARS, LAMB, SGD, Optimization
+\end{IEEEkeywords}
+
+\section{Introduction}
+\label{sec:intro}
+\input{introduction.tex}
+% 1 pg
+\section{Background}
+\label{sec:background}
+\input{background.tex}
+% 1-2 pgs
+% Need section for related work, and a separate section for
+% the different study cases (why do we study them?)
+
+
+\section{Methodology}
+\label{sec:method}
+\input{methodology.tex}
+% 1.5 pgs
+% different section for each optimizer (SGD, lars, lamb, adam)
+% for each section, go over initial background of how it was made, the math behind it
+% for the lars/lamb show the difference between their baseline comparisons (so SGD/adam)
+
+
+
+% \section{Experimental setup}
+% \label{sec:experiments}
+% \input{experiments.tex}
+% at least 2-2.5 pages
+
+% different subsections for each subsection type (NLP, computer vision, speech processing)
+
+% for each section, start with the initial model, mention/explain the metrics used to evaluate (so overall accuracy or F1 score, etc basically anything logged in tensorboard)
+% definitely mention the loss function used (binary cross entropy etc.)
+
+% final section will mention the metrics we are saving for the adam/lamb, sgd/lars and how we will compare them (using tensoboard logs while running with similar input params (such as the learning rate / beta / eps))
+
+% \section{Results}
+% \label{sec:results}
+% \input{results.tex}
+% 2 pages
+
+% put graphs for at least one of each of the models tested (overlay the data from the proper comparison)
+
+% \section{Threats of Validity}
+% \label{sec:threats}
+% \input{threats.tex}
+% .5 pages
+
+
+
+% \section{Conclusion and Future Work}
+% \label{sec:conclusion}
+% \input{conclusion.tex}
+% .5 pages
+
+\balance
+\bibliographystyle{IEEEtranN}
+\bibliography{bibliography.bib}
+
+
+
+\end{document}
