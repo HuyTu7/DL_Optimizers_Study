@@ -1,7 +1,29 @@
-In a general gradient descent algorithm, the updating rule is follows:
-\begin{align*}
-x_{t+1} = x_t - \eta_t g_t, 
-\end{align*} 
+A neural network learns to map a set of inputs, $X$, to a corresponding set of outputs, $Y$, while given a subset of correct mappings (training data), $D$, where $D \subset X$, and
+% \begin{equation}
+%   \begin{aligned}
+%     D \subset X
+%   \end{aligned}
+% \end{equation}
+% \begin{equation}
+%   \begin{gathered}
+%     D = \{(x_i,y_i),...,(x_k,y_k)\}
+%   \end{gathered}
+% \end{equation}
+\begin{center}
+$D = \{(x_i,y_i),...,(x_k,y_k)\},$
+\end{center}
+where $(x_i,y_i)$ are individual samples. The network takes the input samples and performs a number of sequential operations to create output estimates, denoted by $\hat y_i$. During the training phase of a neural network, the objective function to be minimized is the derived cost function, $J$, which is dependent on the weights/parameters of the network, $w_i$, as well as $x_i$ (the inputs), $\hat y_i$ (the outputs), and $y_i$ (the correct labels). Thus, training of a neural network can be represented as the optimization problem:
+
+\begin{center}
+$\min\limits_{x_i \in X} J(w_i,x_i,y_i,\hat y_i)$
+\end{center}
+
+Since the objective function shown above is typically non-convex and can have many pseudo-optimal solutions, direct solutions of the cost function are not feasible. Instead, gradient descent algorithms are used to find these locally minimizing set of parameters using the training data and the corresponding cost/loss function.
+
+In a general gradient descent algorithm, a random (or predetermined) initial point, $x_0$, is chosen, and then each subsequent value $x_{t+1}$ is determined with the following updating rule:
+\begin{center}
+$x_{t+1} = x_t - \eta_t g_t $
+\end{center} 
 where $\eta_t$ is step length and $g_t$ is gradient. The following two changes are proposed when updating for large batch training:
 \begin{enumerate}
     \item substitute $g_t$ with $g_t/\|g_t\|$ 
@@ -30,7 +52,7 @@ Then there is a bias correction step:
 	\caption{$ADAM$}
 	\label{alg:adam}
 	\begin{algorithmic}
-		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1}, \beta_{2} < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1}, \beta_{2} < 1$,  $\epsilon > 0$
 		\STATE Set $m_{0} = 0, v_{0} = 0$
 		\FOR{$t=1$ {\bfseries to} $T$}
 		\STATE Draw b samples $S_t$ from $\mathbb{P}$
@@ -45,26 +67,7 @@ Then there is a bias correction step:
 \end{algorithm}
 \end{minipage}\hfill%
 
-\subsection*{LARS optimizier}
-
-\begin{minipage}[b]{.48\textwidth}
-\begin{algorithm}[H]\small
-	\caption{$LARS$}
-	\label{alg:lars}
-	\begin{algorithmic}
-		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1} < 1$, scaling function $\phi$, $\epsilon > 0$
-		\STATE Set $m_{0} = 0$
-		\FOR{$t=1$ {\bfseries to} $T$}
-		\STATE Draw b samples $S_t$ from $\mathbb{P}$
-        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
-        \STATE $m_{t} = \beta_{1} m_{t-1} + (1 - \beta_{1}) (g_{t} + \lambda x_t)$
-		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|m_t^{(i)}\|} m_t^{(i)}$ for all $i \in [h]$
-		\ENDFOR
-	\end{algorithmic}
-\end{algorithm}
-\end{minipage}\hfill%
-
-\subsection*{LAMB optimizier}
+\subsection*{LAMB optimizer}
 The lamb algorithm uses ADAM as base algorithm, it makes the following adjustments:
 \begin{enumerate}
     \item Using the square root of second moment for normalization
@@ -90,3 +93,40 @@ The lamb algorithm uses ADAM as base algorithm, it makes the following adjustmen
 	\end{algorithmic}
 \end{algorithm}
 \end{minipage}
+
+\begin{minipage}[b]{.48\textwidth}
+\begin{algorithm}[H]\small
+	\caption{$Momentum\:SGD$}
+	\label{alg:SGD}
+	\begin{algorithmic}
+		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1} < 1$ ,$\epsilon > 0$
+		\STATE Set $m_{0} = 0$
+		\FOR{$t=1$ {\bfseries to} $T$}
+		\STATE Draw b samples $S_t$ from $\mathbb{P}$
+        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
+        \STATE $m_t = \beta_1 m_{t-1} - \eta_t g_t$
+		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - m_t$ for all $i \in [h]$
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+\end{minipage}\hfill%
+
+\subsection*{LARS optimizer}
+
+\begin{minipage}[b]{.48\textwidth}
+\begin{algorithm}[H]\small
+	\caption{$LARS$}
+	\label{alg:lars}
+	\begin{algorithmic}
+		\STATE {\bfseries Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $0 < \beta_{1} < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE Set $m_{0} = 0$
+		\FOR{$t=1$ {\bfseries to} $T$}
+		\STATE Draw b samples $S_t$ from $\mathbb{P}$
+        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
+        \STATE $m_{t} = \beta_{1} m_{t-1} + (1 - \beta_{1}) (g_{t} + \lambda x_t)$
+		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|m_t^{(i)}\|} m_t^{(i)}$ for all $i \in [h]$
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+\end{minipage}\hfill%
+
