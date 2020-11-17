@@ -1,7 +1,6 @@
 \subsection{Optimizers}
 
-% 3 Residual cnn layers with dimension of 500
-% 
+
 Training a large deep neural network is very computationally expensive. The training of CNN and LSTM are typically optimized using Stochastic Gradient (SG) and Adam based methods.  At each step $t$ a minibatch of $B$ samples $x_i$
 is selected from the training set. Increasing the capacity of the mini-batch permits scaling to more nodes without reducing
 the workload on each unit. At the same time, training with a large batch has been observed to be difficult \cite{}. Krizhevsky (2014) suggested the following rules for training with large batches: when you increase
