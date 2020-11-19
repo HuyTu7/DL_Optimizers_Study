@@ -1,12 +1,12 @@
-\subsection{Image Classification Setup}
+\subsection{Image Classification Task}
 
 \subsubsection{Dataset}
 
 In this paper we used EMNIST \cite{emnist} data set, which is a collection of handwritten characters and digits from NIST Special Database 19. The data is converted to 28 by 28 matrix so its format matches MNIST data set. There are six subsets in the EMNIST data set: ByClass, ByMerge, Balanced, Letters, Digits and MNIST. We chose the Letter subset because there are around 145k data in it, which will result in a decent running time without loss of information. In the Letter subset, there are 26 classes which corresponding to letter A to letter Z.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=4cm]{img/EMNIST.png}
-    \caption{letters in EMNIST}
+    \includegraphics[width=6cm]{img/EMNIST.png}
+    \caption{Data instances in EMNIST, which are handwritten 26 alphabetical characters.}
     \label{fig:EMNIST}
 \end{figure}
 
@@ -27,6 +27,8 @@ Note there is only one term in the loss function per data, which is the negative
 
 \subsubsection{Evaluation}
 
+
+
 The batch size for training is {512, 1024, 2048, 4096, 8192}, the test size is 2048. we keep track of the train loss, test accuracy and test loss for every epoch when using those different optimizers to train the model. For the optimizers, we keep track of the trust ratio and the weight norm of them.
 
 
@@ -34,7 +36,7 @@ The batch size for training is {512, 1024, 2048, 4096, 8192}, the test size is 2
 
 \subsubsection{Dataset}
 
-For our QA system task, the SQuAD dataset by Rajpurkar et al. \cite{} is employed. There are 80,000 instances for training and 30,000 instance for testing. For each instance, there are question, answers and the context that the question and answer are based on along with the boundary label of the answer. The task is to read the question in order to (1) retrieve the relevant context and (2) then locate the start and end position of the answer. Example of such an instance is shown in Table \ref{tbl:qasystem}. 
+For our QA system task, the SQuAD dataset by Rajpurkar et al. \cite{squad} is employed. There are 80,000 instances for training and 30,000 instance for testing. For each instance, there are question, answers and the context that the question and answer are based on along with the boundary label of the answer. The task is to read the question in order to (1) retrieve the relevant context and (2) then locate the start and end position of the answer. Example of such an instance is shown in Table \ref{tbl:qasystem}. 
 
 \begin{table}[!t]
 \vspace{-5pt}
@@ -78,12 +80,17 @@ The first transformation for both the question and the context tokens is that th
 
 The model employed for QA end-to-end system here is called Document retriever Question Answering (DrQA) as illustrated in Figure~\ref{fig:DrQA}.  Starting from the top:
 \begin{enumerate}[start=1,label={\bfseries\arabic*:}]
-    \item According to Lee et al. \cite{}, the questions and context can be aligned to build respective embedding of: 
+    \item According to Lee et al. \cite{Lee}, the questions and context can be aligned to build respective embedding of: 
     \begin{center} $f_{align} = \sum_j \alpha_{i, j} E(q_j)$. \end{center}
     
     Where $\alpha$ is single dense layer with relu non-linearity and $E()$ represents the glove embeddings. This layer help initialize what portion of the context is more important or relevant with respect to the question.
     
-    \item In order to understand the representation of these glove and aligned paragraphs, these are passed to stacked bi-LSTM. 
+    \item In order to understand the representation of these glove and aligned paragraphs, these are passed to stacked bi-LSTM. LSTM is expressed as: 
+    $z_t &= \sigma(W_z x_t + U_z h_{t-1} + b_z) \\
+    r_t &= \sigma(W_r x_t + U_r h_{t-1} + b_r) \\
+    \tilde{h}_t &= f(W_h x_t + r_t \circ U_h h_{t-1} + b_h) \\
+    h_t &= (1 - z_t) h_{t-1} + z_t \tilde{h}_t
+    $
     
     \item Then the importance of each word in the question is calculated through Linear Attention layer as $b$ below with $w$ as a trainable weight vector:
     \begin{center} 
@@ -103,18 +110,13 @@ The model employed for QA end-to-end system here is called Document retriever Qu
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{img/DrQA.png}
-    \caption{DrQA model architecture}
+    \caption{Document Reader model architecture part of DrQA}
     \label{fig:DrQA}
 \end{figure}
 
 % As the name suggested, the model included Document Retriever and Document Reader: 
 
-\begin{figure*}[!t]
-    \centering
-    \includegraphics[width=\textwidth]{img/speech.png}
-    \caption{A variant of Deep Speech 2 model architecture}
-    \label{fig:DrQA}
-\end{figure*}
+
 
 
 \subsubsection{Evaluation}
@@ -208,7 +210,13 @@ Residual CNN block includes: 3 layers with 32x32 window size, stride of 2. A ful
 
 Model is similar to Deep Speech 2, model, but first preprocesses the data into a spectrogram, then these are fed into 3 Residual CNN blocks to extract feature vectors of length 500 from the audio data, and a set of 3 bidirectional GRU-RNN layers to translate the extracted features into an intermediate output vector, which is fed into a fully connected layer, then a softmax, then a 28 long vector mapping of probabilities of corresponding letters or symbols.
 
-
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\linewidth]{img/speech.png}
+    \caption{A variant of Deep Speech 2 architecture that utilizes Res-CNN and GRU.}
+    \label{fig:deepSpeech}
+    \vspace{-10pt}
+\end{figure*}
 
 \begin{enumerate}[start=1,label={\bfseries\arabic*:}]
     \item Residual network consists of stacked ``residual units'' inspired by He et al. but with layer norm to learn the audio features expressed as:
@@ -221,12 +229,12 @@ Model is similar to Deep Speech 2, model, but first preprocesses the data into a
     \item Bidirectional GRU-RNN is then utilized to leverage the features to learn the representation of the audio's spectrogram frames before the current step and after it as well. 
     
     \begin{center}
-    \begin{aligned}
-    z_t &= \sigma(W_z x_t + U_z h_{t-1} + b_z) \\
-    r_t &= \sigma(W_r x_t + U_r h_{t-1} + b_r) \\
-    \tilde{h}_t &= f(W_h x_t + r_t \circ U_h h_{t-1} + b_h) \\
-    h_t &= (1 - z_t) h_{t-1} + z_t \tilde{h}_t
-    \end{aligned}
+    
+    $z_t &= \sigma(W_z x_t + U_z h_{t-1} + b_z)$ \\
+    $r_t &= \sigma(W_r x_t + U_r h_{t-1} + b_r)$ \\
+    $\tilde{h}_t &= f(W_h x_t + r_t \circ U_h h_{t-1} + b_h)$ \\
+    $h_t &= (1 - z_t) h_{t-1} + z_t \tilde{h}_t$
+
     \end{center}
     
     $\sigma(\cdot)$ is the sigmoid function, $z$ and $r$ represent the \emph{update} and \emph{reset} gates respectively. This is slightly different from the standard GRU in that the hidden state $h_{t-1}$ is multiplied by $U_h$ prior to scaling by the reset gate. This allows for all operations on $h_{t-1}$ to be computed in a single matrix multiplication. Moreover, Amodei et al. found similar performance for $tanh$ and clipped-ReLU for nonlinear transformation so clipped-ReLU is picked for simplicity and uniformity with the rest of the network.
@@ -248,7 +256,7 @@ Model is similar to Deep Speech 2, model, but first preprocesses the data into a
 
 \subsubsection{Evaluation}
 
-The model is trained on the Connectionist Temporal Classification (CTC) loss function when aligning audio to transcript, which was originated by \cite{} as shown here for a single (X, Y) pair: 
+The model is trained on the Connectionist Temporal Classification (CTC) loss function when aligning audio to transcript, which was originated by \cite{CTC} as shown here for a single (X, Y) pair: 
 \begin{center}
 $p(Y | X) = \sum_{A\in A_{X, Y}} \prod_t^T = p_t(a_t |. X)$    
 \end{center}
