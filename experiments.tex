@@ -1,11 +1,22 @@
-\subsection{Image Classification Task}
+\subsection{Image Classification Setup}
+
+Image Classification Task
+    Dataset
+    Architecture
+    Implementation Details (coding aspect, where it is in the repo, hyperparameters)
+    Evaluation
+Question Answering System Task
+Speech-to-Test Decoding Task
+
+
+
 
 \subsubsection{Dataset}
 
 In this paper we used EMNIST \cite{emnist} data set, which is a collection of handwritten characters and digits from NIST Special Database 19. The data is converted to 28 by 28 matrix so its format matches MNIST data set. There are six subsets in the EMNIST data set: ByClass, ByMerge, Balanced, Letters, Digits and MNIST. We chose the Letter subset because there are around 145k data in it, which will result in a decent running time without loss of information. In the Letter subset, there are 26 classes which corresponding to letter A to letter Z.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=6cm]{img/EMNIST.png}
+    \includegraphics[width=8cm]{img/EMNIST.png}
     \caption{Data instances in EMNIST, which are handwritten 26 alphabetical characters.}
     \label{fig:EMNIST}
 \end{figure}
@@ -195,7 +206,12 @@ The model's loss function for updating each batch and epoch is the sum of cross 
 % image of the network is the network.png
 % https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch
 
-
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=0.7\linewidth]{img/adam_blue_lamb_orange_drqa_256.png}
+    \caption{Adam (light blue) and LAMB (orange) test loss convergence graph with batch size of 256.}
+    \label{fig:256}
+\end{figure}
 
 \subsubsection{Dataset}
 

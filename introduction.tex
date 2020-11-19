@@ -2,13 +2,22 @@ Deep neural networks typically have a large upfront cost associated with computa
 
 Recent research in lowering training cost has been focused on optimizing the actual mathematical calculations during the process. Methods to make minor improvements include choosing optimal hyperparameters like the learning rate, automated perceptron pruning/dropout[], and by applying some form of gradient normalization. More complicated adaptive approaches attempt to better understand the direction of negative gradient to achieve more effective steps, typically using moving averages of the first and second moments. Popular optimizers like Adam and AdamW incorporate this adaptive approach and have shown substantial improvements over its predecessors[]. More advanced algorithms such as LAMB~\cite{You2020Large}, LARS~\cite{qian2020impact, ginsburg2018large}, or NVLAMB~\cite{nvidia_nvlamb}  take this mentality several steps further and apply layer-wise adaptive gradient pre/normalization. This paper shall investigate, compare, and implement these innovative optimization techniques in relation to deep NN's in the NLP and Image Processing domain. 
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=\linewidth, height=7.5cm]{img/dl_optimizers.png}
-    \caption{Type of problems in this study across four state-of-the-art optimizers}
-    \label{fig:study}
-    \vspace{-10pt}
-\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Overview of the studies: types of the explored tasks with corresponding models and optimizers}
+\label{tab:LargeBatch}
+\begin{tabular}{ccc} 
+ \toprule
+\textbf{Domain Task \& Models} & \textbf{Optimizers} \\
+ \midrule
+  Image Classification - CNN \cite{} & SGD \cite{} \\
+  QA System - DrQA \cite{} & LARS \cite{} \\ 
+  Speech to Text System - Deep Speech 2 \cite{} & Adam \cite{} \\
+  &  LAMB \cite{} \\
+  \bottomrule
+\end{tabular}
+\end{table}
 
 Image classification is a process of labeling and categorizing pictures. For most image classification tasks, convolutional neural networks are the most effective at achieving high accuracy with a moderate number of perceptron connections. However, with recurrent convolutional and pooling layers, these networks can become very deep (large number of parameters) relatively quickly[]. Many issues arise with standard back-propagation techniques of these deep CNN's, putting a large burden on the effectiveness of the optimizer chosen to train the model. Even after thousands of iterations and epochs, some optimizers still fail converge to optimal weights[] with used on models with high numbers of layers. We expect that the layer-wise approach taken by the LAMB or LARS optimizers will thus improve training time of these types deep networks significantly, as they should be able to better incorporate information from the individual layer gradients. This decrease in training time should be seen as a faster decrease in the loss function value while still maintaining relatively similar accuracy on the test/validation set.
 

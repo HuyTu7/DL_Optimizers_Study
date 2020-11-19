@@ -26,7 +26,7 @@ $x_{t+1} = x_t - \eta_t \nabla L_t(w_i,x_i,y_i,\hat y_i) $
 \end{center} 
 where $\eta_t$ is step length (learning rate), and $\nabla L_t$ is gradient at the current time step. Different algorithms incorporate more variables and calculations into this update step, and/or can add more normalization steps in between updates.
 
-\subsection*{SGD Algorithm}
+\subsection{SGD Algorithm}
 
 The SGD algorithm is one of the most common (and basic) gradient descent algorithms used in the neural network training. The adapted algorithm for mini-batches is as follows:
 \vspace{14pt}
@@ -68,7 +68,7 @@ In summary, the mini-batch SGD algorithm states that for every mini-batch (from 
 \vspace{3pt}
 
 Mini-batch SGD has been shown to easily converge many moderately sized neural networks, but fails when the network becomes large or when there is large variance sample to sample.
-\subsection*{LARS optimizer}
+\subsection{LARS optimizer}
 
 The LARS optimizer (short for Layer-wise Adaptive Rate Scaling), developed and outlined by \_ in [], improves upon the previous SGD algorithm by scaling learning rate across individual layers. You et al. found that the ratio of $||w_t||$ ($l_2$ norm of the current weights) to $||g_t||$ (the gradient at the current time step) varied tremendously from the initial to final layers. They propose that scaling the learning rate $\eta_t$ by a second parameter called the "trust" or "lars" coefficient and by the ratio $\frac{||w_t||}{||\nabla L(w_t^l)||}$, training should substantially improve for deep neural networks. They proved this was the case for the ResNet-50 model even when trained with extremely large batch sizes (greater than 32k)[]. An outline of the algorithm in the case of SGD with LARS and momentum is as follows:
 \begin{minipage}[b]{.48\textwidth}
@@ -127,7 +127,7 @@ It is important to note that there are two key differences between this implemen
 
 It can be deduced that dividing by the $l_2$ norms of the loss function and weight vector is effectively normalizing the magnitude of the update step. In practice, this means that only the direction of the gradient is taken into consideration for each update step. It is assumed that this layer-wise normalization allow for deep networks to be trained for higher numbers of iterations with a less likelihood of over-fitting. When applied to the mini-batch case, gradient updates are performed in the same manner, where the gradient updates at each mini-batch are averaged to make a singular update. 
 
-\subsection*{ADAM optimizer}
+\subsection{ADAM optimizer}
 Although LARS makes many improvements to traditional SGD algorithms, it still does not incorporate higher-order terms that could benefit each update step. The ADAM optimizer, created by \_ in [], enhances regular gradient descent algorithms through the addition of two terms and two hyperparameters:
 % It introduces exponential moving average on the first and second order of the gradient:
 \vspace{-10pt}
@@ -174,7 +174,7 @@ The addition of these two terms comes from the calculation of the expected value
 \end{algorithm}
 \end{minipage}\hfill%
 
-\subsection*{LAMB optimizer}
+\subsection{LAMB optimizer}
 The LAMB algorithm, developed by \_ in [] uses ADAM as the base algorithm, by applies the same layer-wise normalization that LARS implements. More specifically, it makes the following adjustments:
 \begin{enumerate}
     \item Using the square root of second moment for normalization
