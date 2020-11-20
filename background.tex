@@ -11,7 +11,7 @@ model with batch $B=6400$, and Li (2017) trained Resnet-152 for $B=5K$. Two main
 \begin{itemize}
     \item The instability of training with high learning rates (LR). Goyal et al. suggested the LR warm-up policy to start with a small LR and switch to the regular LR after a few epochs. They were able to combine that with linear scaling to train Resnet-50 with batch $B=8K$ with loss in accuracy. 
     
-    \item There is a lack of generalization ability, according to Keskar et al. \cite{Keskar}, the large-batch methods seem to converge to sharp minimizers of the training function. Adaptive learning rates have gathered interests to solve this problem and also to help reduce the hand-tuning of hyperparameters \cite{}.  
+    \item There is a lack of generalization ability, according to Keskar et al. \cite{Keskar}, the large-batch methods seem to converge to sharp minimizers of the training function. Adaptive learning rates have gathered interests to solve this problem and also to help reduce the hand-tuning of hyperparameters \cite{adaplr}.  
 \end{itemize}
 
 
@@ -46,7 +46,7 @@ two dimensional structure of the input data in order to capture a deeper underst
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{img/QA.png}
-    \caption{An overview of the question answering system DrQA \cite{}.}
+    \caption{An overview of the question answering system DrQA \cite{DrQA}.}
     \label{fig:DrQA_overview}
     \vspace{-10pt}
 \end{figure}
@@ -59,10 +59,10 @@ The NLP specific task we picked for this paper is open-domain QA originally root
 
 
 
-Secondly, it is a distinct subfield of machine comprehension of text. With the advancement of deep learning architectures like attention-based and memory-augmented neural network \cite{}, researchers have made considerable progress.  The QA system adopted for this study shall utilize these new methods.
+Secondly, it is a distinct subfield of machine comprehension of text. With the advancement of deep learning architectures like attention-based and memory-augmented neural network \cite{attention} \cite{attention2} \cite{attention3}, researchers have made considerable progress.  The adopted QA system  for this study shall utilize these new methods.
 
 
-Other previous researchers also considered other resources of semi-structured knowledge such as infoboxes, article structure, category structure, and definitions \cite{}. Yet, this QA system only consider the comprehension of text only, or relying on a single resource.
+Other previous researchers also considered other resources of semi-structured knowledge such as infoboxes, article structure, category structure, and definitions \cite{Ryu}. Yet, this QA system only consider the comprehension of text only, or relying on a single resource.
     
     
 
@@ -82,9 +82,9 @@ answer spans in those defined context.
 \subsubsection{Speech - Speech-to-Text}
 
 Another study case which is essential to a lot of virtual or smart home assistant is speech recognition. As previously mentioned, our goal is to output reasonable transcription according to the audio segment. A general system is illustrated in the Figure \ref{fig:speech2text}. For more than 20 years ago, feed-forward
-neural network acoustic models were explored \cite{}.  More recently DNNs have become a fixture in the ASR pipeline with almost all
-state of the art speech work containing some form of deep neural network \cite{}. From CNN successes with acoustic models \cite{}, recurrent
-neural networks (typically LSTMs), are beginning to be adapted in state-of-the art recognizers \cite{} that thrive on convolutional layers for the feature extraction \cite{}. World-wide recognized level of such models include Deep Speech by Baidu \cite{} and Listen Attend Spell (LAS) by Google \cite{}. We adapted a model that is similar to Deep Speech 2 architecture \cite{} which utilized enhanced numerical optimization through SortaGrad and Batch normalization, RNNs evaluation with larger strides with bigram outputs, and searching through bidirectional and unidirectional models.
+neural network acoustic models were explored \cite{acoustic} \cite{acoustic2}.  More recently DNNs have become a fixture in the ASR pipeline with almost all
+state of the art speech work containing some form of deep neural network \cite{DNN}. From CNN successes with acoustic models \cite{CNNacoustics}, recurrent
+neural networks (typically LSTMs), are beginning to be adapted in state-of-the art recognizers \cite{recognizers} that thrive on convolutional layers for the feature extraction \cite{featextr}. World-wide recognized level of such models include Deep Speech by Baidu \cite{deepspeech} and Listen Attend Spell (LAS) by Google \cite{LAS}. We adapted a model that is similar to Deep Speech 2 architecture \cite{deepspeech} which utilized enhanced numerical optimization through SortaGrad and Batch normalization, RNNs evaluation with larger strides with bigram outputs, and searching through bidirectional and unidirectional models.
 
 
 \begin{figure}[!t]
@@ -94,6 +94,6 @@ neural networks (typically LSTMs), are beginning to be adapted in state-of-the a
     \label{fig:speech2text}
 \end{figure}
 
-For learning the audio features, the author employed the Residual CNN which was first introduced by He et al. \cite{} to learn the skip connections (i.e. residual connections) for faster and more generalizable audio features. Specifically, these networks shall have a smoother loss surface when visualizing to make it easier to navigate the landscape and find a lower and more generalizable loss minima.  For leveraging the previously learned features, the bidirectional recurrent neural network (RNN) is employed which first introduced by for being good at sequence modeling problem. Specifically, RNN helps learn the context of frame before each step and the frame after it as well. The author employed Gated Recurrent Unit (GRU's) variant which is simpler than traditional Long Short Term Memory (LSTM) in (1) avoiding the usage of memory unit that LSTM does and (2)  LSTMs have computations  separating the update gate and forget gate which lead to the architecture more complex and less efficient to GRU. 
+For learning the audio features, the author employed the Residual CNN which was first introduced by He et al. \cite{resnet} to learn the skip connections (i.e. residual connections) for faster and more generalizable audio features. Specifically, these networks shall have a smoother loss surface when visualizing to make it easier to navigate the landscape and find a lower and more generalizable loss minima.  For leveraging the previously learned features, the bidirectional recurrent neural network (RNN) is employed which first introduced by for being good at sequence modeling problem. Specifically, RNN helps learn the context of frame before each step and the frame after it as well. The author employed Gated Recurrent Unit (GRU's) variant which is simpler than traditional Long Short Term Memory (LSTM) in (1) avoiding the usage of memory unit that LSTM does and (2)  LSTMs have computations  separating the update gate and forget gate which lead to the architecture more complex and less efficient to GRU. 
 
 
