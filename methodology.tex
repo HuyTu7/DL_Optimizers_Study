@@ -130,7 +130,7 @@ It is important to note that there are two key differences between this implemen
 It can be deduced that dividing by the $l_2$ norms of the loss function and weight vector is effectively normalizing the magnitude of the update step. In practice, this means that only the direction of the gradient is taken into consideration for each update step. It is assumed that this layer-wise normalization allow for deep networks to be trained for higher numbers of iterations with a less likelihood of over-fitting. When applied to the mini-batch case, gradient updates are performed in the same manner, where the gradient updates at each mini-batch are averaged to make a singular update. 
 
 \subsubsection{ADAM optimizer}
-Although LARS makes many improvements to traditional SGD algorithms, it still does not incorporate higher-order terms that could benefit each update step. The ADAM optimizer, created by \_ in \cite{adam}, enhances regular gradient descent algorithms through the addition of two terms and two hyperparameters:
+Although LARS makes many improvements to traditional SGD algorithms, it still does not incorporate higher-order terms that could benefit each update step. The ADAM optimizer, created by  in \cite{adam}, enhances regular gradient descent algorithms through the addition of two terms and two hyperparameters:
 % It introduces exponential moving average on the first and second order of the gradient:
 \vspace{-10pt}
 \begin{align*}
@@ -289,7 +289,7 @@ The model is a variant of the Deep Speech 2 model with the aid of Residual CNN (
     \vspace{-10pt}
 \end{figure*}
 
-\begin{enumerate}[start=1,label={\bfseries\arabic*:}]
+\begin{enumerate}[start=1,label={\bfseries \arabic*:}]
     \item Residual network consists of stacked ``residual units'' inspired by He et al. \cite{resnet} but with layer norm to learn the audio features expressed as:
     \begin{center}
     $x_{l + 1} = ReLU(h(x_l) + F(x_l, W_l))$ \\
