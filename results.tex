@@ -1,3 +1,4 @@
+
 \subsection{Image Classification}
 % lf 0.01
 
@@ -12,7 +13,7 @@
 % Adam & 0.18780 & 0.19604 & 0.19640 & 0.19186 & \\
 % Lamb & 0.19837 & 0.20102 & 0.20386 & 0.20411 & \\
 
-\begin{table}[!t]
+\begin{table}[!b]
 \vspace{-5pt}
 \small
 \vspace{7pt}
@@ -54,12 +55,15 @@ LAMB & 0.20 & \cellcolor{gray!30} 0.20 & \cellcolor{gray!30} 0.20 & 0.20 \\
 \end{center}
 \end{table}
 
-The result of image classification is shown in Table \ref{t}. We researched four optimizers (SGD, Adam, LARS, LAMB) across four different batch sizes (1024, 2048, 4096, 8192) with two different learning rate (0.01, 0.001). 
 
+
+The result of image classification is shown in Table \ref{tbl:img_results}. We researched four optimizers (SGD, Adam, LARS, LAMB) across four different batch sizes (1024, 2048, 4096, 8192) with two different learning rate (0.01, 0.001). The grey cells represent the winner (the one with the lowest loss in each column). The results obtained are reasonable since LAMB outperformed all other optimizers under the conditions of a higher learning rate (0.01) and was unaffected by batch size. LAMB's performance was nearly as good as Adam in the lower learning rate case (0.001). This difference could be accounted to for the extra normalization (and thus most likely smaller magnitude) weight updates. Adam performs the worst at the higher learning rates, which is probably because it was set so high that Adam failed to learn anything about the first or second moments from the initial time step. It shows that Adam is much more susceptible to changes in learning rate, but when performed across different batch sizes there was not too much of an overall difference seen from the table. In Figure \ref{fig:cv_plots}, it can be seen that although Adam achieved a similar global minimum of the loss function at some point across batch sizes, its performance (in terms of number of epochs to reach said minimum) was slightly hindered. Thus, Adam performed best lower batch sizes, which confirms the previous hypothesis. 
+
+Surprisingly, LARS was the worst performer in almost all cases. SGD bested LARS in every situation as well. Comparing performance across different learning rates, it can be seen that a higher learning rate helped LARS come much closer to a local minima. This is most likely caused by the same principal in the comparison of LAMB to Adam, where the extra normalization decreased the overall magnitude of the update step. The performance of LARS matches the findings seen in all other case studies. For both SGD and LARS, it can be shown that overall performance is indirectly related to batch size as when batch size increased, the performance became much worse. However, for the LAMB optimizer the performance stayed the same, which indicates that LAMB might be useful for large batch training.
 
 \subsection{QA System}
 
-\begin{table}[!t]
+\begin{table}[!b]
 \vspace{-5pt}
 \small
 \vspace{7pt}
@@ -84,27 +88,17 @@ LAMB & \cellcolor{gray!30} 4.58 & 4.62 & 4.59 & 4.86\\
 \vspace{-15pt}
 \end{table}
 
-
-
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.7\linewidth]{img/drqa_128_blars_oadam_psgd_rlamb.png}
-    \caption{LARS (light blue), SGD (pink), LAMB (red), and Adam (orange) test loss convergence graph.}
-    \label{fig:128}
-\end{figure}
-
-The experimentation is conducted by deploying the model from \S\ref{sec:method}.B against the dedicated four optimizers in this study (SGD, Adam, LARS, and LAMB) across various batch sizes (64, 128, 256, 512). The results are reported in the Table~\ref{tbl:qasystem}. The gray cells denote the winner (the one with the lowest loss overall test loss values in the same column) across each batch size. The results were surprising as LAMB only outperformed Adam in a batch size of 64 but lost in the other batch sizes. LARS performed the worst across every run, where it was bested by traditional SGD consistently. Moreover, as the batch size increased, the gap between performances increased. This contradicts what has been observed in current literature \cite{ginsburg2018large}. We did not observe the performance increase of the QA system with larger batch sizes across the layer-wise adaptive techniques. However, there are two possible explanations for these results, which include: 
-\begin{itemize}
-    \item The batch sizes tested in the QA system were statistically small in comparison to most literature (which reported sizes of 4K or >8K)
-    \item Based on Figure \ref{fig:256}, Adam over-fitted a lot more quickly and triggered the early stop procedure, while the other algorithms did not. A similar trend can be observed in Figure \ref{fig:128} where LAMB converged very slowly and it can easily be deduced that a longer training time would allow for an even lower test loss value (and higher overall accuracy) than ADAM ever could reach
-\end{itemize}
+The experimentation is conducted by deploying the model from \S\ref{sec:method}.B against the dedicated four optimizers in this study (SGD, Adam, LARS, and LAMB) across various batch sizes (64, 128, 256, 512). The results are reported in the Table~\ref{tbl:qasystem}. The gray cells denote the winner (the one with the lowest loss overall test loss values in the same column) across each batch size. The results were surprising as LAMB only outperformed Adam in a batch size of 64 but lost in the other batch sizes. LARS performed the worst across every run, where it was bested by traditional SGD consistently. Moreover, as the batch size increased, the gap between performances increased. This contradicts what has been observed in current literature \cite{ginsburg2018large, }. We did not observe the performance increase of the QA system with larger batch sizes across the layer-wise adaptive techniques. To our surprise, the results are actually opposite to it where as the QA system with laywer-wise techniques work better for smaller batch sizes. 
 
 \subsection{Speech-to-Text}
+
+The experimentation is conducted by deploying the model from \S\ref{sec:method}.C against the dedicated four optimizers in this study (SGD, Adam, LARS, and LAMB) across various batch sizes (8, 16, 32). The results are reported in the Table~\ref{tbl:speech_results}. The gray cells denote the winner (the one with the lowest loss overall test loss values in the same column) across each batch size. The results are consistent with QA System results that Adam only outperformed LAMB at batch size of 16 but lost in the other two batch sizes (8 and 32). LARS performed the worst across every run, where it was bested by traditional SGD consistently. In some cases, LARS was unable to train the network at all, as indicated by the NaN* values. This was most likely due to exploding gradients during the normalization at the update steps. Moreover, as the batch size increased, the performances gap increased.
+
 \begin{table}[!t]
 \vspace{-5pt}
 \small
 \vspace{7pt}
-\caption{Speech-to-Text performance based on optimizers (SGD, Adam, LARS, LAMB) across different batch sizes (8, 16, 32). Highlighted gray cells indicate best performing optimizer.}\label{tbl:speech_results}
+\caption{Speech-to-Text performance based on optimizers (SGD, Adam, LARS, LAMB) across different batch sizes (8, 16, 32). Highlighted gray cells indicate best performing optimizer. The NaN* values indicate training was unable to converge.}\label{tbl:speech_results}
 \vspace{-10pt}
 \begin{center}
 \begin{tabular}{ c|c|c|c}

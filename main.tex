@@ -39,6 +39,7 @@
 \usepackage[framemethod=tikz]{mdframed}
 \usetikzlibrary{shadows}
 \usepackage{graphics}
+\usepackage{graphicx}
 
 \date{September 2020}
 
@@ -73,7 +74,7 @@ for IEEE Journals}
 \begin{abstract}
 There is a direct relationship between a machine learning model's number of parameters and potential training time. This poses a large problem, as the first step taken to improve the accuracy of existing models is typically to increase the number of inputs/parameters. It is believed that these extra variables allow neural networks (NN) to better capture the latent data of the physical phenomena being studied. In the case of artificial neural networks, this is usually done by adding extra hidden layers or by increasing the resolution of the input. Breakthroughs in raw computational power have allowed many modern NN's to grow to a previously insurmountable size, some even containing as much as 340 million parameters (XLNet)\cite{Yang2019XLNetGA}. Even with massive parallel processing and the fastest GPU's available, this process still takes time and is a major hindrance in the research process. This high upfront cost associated with training (sometimes over \$500,000/model) has thus driven further research into optimizing the mathematics and software itself instead of the physical hardware.
 
-Most of the improvements in the effectiveness of the training process can be attributed to the advancement of gradient descent algorithms\cite{SGD}. These more efficient algorithms incorporate more information than just the gradient of the objective function, including calculations like the first or second moment. Gradient normalization techniques to account for training data variance is also a new popular technique and is integrated in the latest optimizers such as LARS, LAMB, and NVLAMB \cite{nvidia_nvlamb} \cite{You2020Large} \cite{ginsburg2018large}. These algorithms in particular all improve on their predecessors by These algorithms have allowed larger batch sizes (with similar test performance) at a fraction of the training time. Although the aforementioned algorithms derived from LARS have typically been focused on performance improvements in large-scale NN's, this paper aims to investigate their effectiveness in more challenging scenarios including but not limited to low training data situations, few-shot learning, and fine-tuning of transformer-based NLP models.
+Most of the improvements in the effectiveness of the training process can be attributed to the advancement of gradient descent algorithms\cite{SGD}. These more efficient algorithms incorporate more information than just the gradient of the objective function, including calculations like the first or second moment. Gradient normalization techniques to account for training data variance is also a new popular technique and is integrated in the latest optimizers such as LARS, LAMB, and NVLAMB \cite{nvidia_nvlamb} \cite{You2020Large} \cite{ginsburg2018large}. These algorithms in particular all improve on their predecessors by These algorithms have allowed larger batch sizes (with similar test performance) at a fraction of the training time. Although the aforementioned algorithms derived from LARS have typically been focused on performance improvements in large-scale NN's, this paper aims to investigate their effectiveness across more common situations in research with smaller batch sizes, higher memory constraints, and across similar problem domains.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -127,6 +128,9 @@ LARS, LAMB, SGD, Optimization
 
 % put graphs for at least one of each of the models tested (overlay the data from the proper comparison)
 
+
+
+
 \section{Threats of Validity}
 \label{sec:threats}
 \input{threats.tex}
@@ -140,6 +144,7 @@ LARS, LAMB, SGD, Optimization
 \input{conclusion.tex}
 % 
 % .5 pages
+
 
 \balance
 \bibliographystyle{IEEEtranN}

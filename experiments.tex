@@ -1,12 +1,14 @@
+
+
 \subsection{Image Classification Setup}
 
-Image Classification Task
-    Dataset
-    Architecture
-    Implementation Details (coding aspect, where it is in the repo, hyperparameters)
-    Evaluation
-Question Answering System Task
-Speech-to-Test Decoding Task
+% Image Classification Task
+%     Dataset
+%     Architecture
+%     Implementation Details (coding aspect, where it is in the repo, hyperparameters)
+%     Evaluation
+% Question Answering System Task
+% Speech-to-Test Decoding Task
 
 
 
@@ -28,6 +30,8 @@ In this paper we used EMNIST \cite{emnist} data set, which is a collection of ha
 
 
 The batch size for training is {512, 1024, 2048, 4096, 8192}, the test size is 2048. we keep track of the train loss, test accuracy and test loss for every epoch when using those different optimizers to train the model. For the optimizers, we keep track of the trust ratio and the weight norm of them.
+
+
 
 
 \subsection{Question Answering System Setup}
@@ -72,7 +76,12 @@ school has a Catholic...  & Main Building at Notre... & 126] & of the Virgin Mar
 
 The first transformation for both the question and the context tokens is that they are passed through an embedding layer initialized with pre-trained GloVe word vectors. 100-dimensional vectors from 6B web crawl version are used here. There are 110K vocabularies in total. For both paragraph and question encoding, we use 2-layer bidirectional LSTMS with $h = 128$ hidden units. Our model is tested on minibatches of 64, 128, 256, and 512. 
 
-
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.7\linewidth, height=0.7\textheight]{img/eminst_all_figures.png}
+    \caption{Image Classification test loss convergence rate during training based on optimizers (SGD, Adam, LARS, LAMB) across different batch sizes (1024, 2056, 4096, 8192) for learning rate of 0.01 (left plots) and 0.001 (right plots). }
+    \label{fig:cv_plots}
+\end{figure*}
 
 \subsubsection{Evaluation}
 
@@ -150,16 +159,12 @@ The model's loss function for updating each batch and epoch is the sum of cross 
 % image of the network is the network.png
 % https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.7\linewidth]{img/adam_blue_lamb_orange_drqa_256.png}
-    \caption{Adam (light blue) and LAMB (orange) test loss convergence graph with batch size of 256.}
-    \label{fig:256}
-\end{figure}
+
+
 
 \subsubsection{Dataset}
 
-Data was preprocessed into spectrograms at a sample rate of 16khz. The task is to map an audio spectrogram frame to one of the 29 output classes (26 alphabet characters, an apostrophe, a space, and an <END> token). 
+The data was adopted from LibriSpeech \cite{7178964} which are audio recordings of public domain audio books of 100 hours for training and 5 hours for testing. It was preprocessed into spectrograms at a sample rate of 16khz. The task is to map an audio spectrogram frame to one of the 29 output classes (26 alphabet characters, an apostrophe, a space, and an <END> token). 
 
 
 \subsubsection{Implementation Details}
@@ -167,11 +172,9 @@ Data was preprocessed into spectrograms at a sample rate of 16khz. The task is t
 Residual CNN block includes: 3 layers with 32x32 window size, stride of 2. A fully connected layer from ResCNN to GRU-RNN with 2048 to 500 dimension. Bidirectional GRU-RNN block have three layers with 500 input feature dim and 1000 output features. A final fully connected layer with 1000 input and 500 output. Dropout of 30\%.
 
 
-
-
 \subsubsection{Evaluation}
 
-The model is trained on the Connectionist Temporal Classification (CTC) loss function when aligning audio to transcript, which was originated by \cite{CTC} as shown here for a single (X, Y) pair: 
+The model is trained on the Connectionist Temporal Classification (CTC) loss function when aligning audio to transcript, which was originated by Graves et al. \cite{CTC} as shown here for a single (X, Y) pair: 
 \begin{center}
 $p(Y | X) = \sum_{A\in A_{X, Y}} \prod_t^T = p_t(a_t |. X)$    
 \end{center}

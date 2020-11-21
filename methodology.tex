@@ -1,105 +1,88 @@
 \subsection{Optimizers}
 
-A neural network learns to map a set of inputs, \textbf{\textit{X}}, to a corresponding set of outputs, \textbf{\textit{Y}}, while given a subset of correct mappings (training data), $\textbf{\textit{D}}$, where $\textbf{\textit{D}} \subset \textbf{\textit{X}}$, and
-% \begin{equation}
-%   \begin{aligned}
-%     D \subset X
-%   \end{aligned}
-% \end{equation}
-% \begin{equation}
-%   \begin{gathered}
-%     D = \{(x_i,y_i),...,(x_k,y_k)\}
-%   \end{gathered}
-% \end{equation}
+In a very simplistic gradient descent algorithm, a random (or predetermined) initial point, $x_0$, is chosen and then each subsequent value $x_{t+1}$ is determined with the following general updating rule:
 \begin{center}
-$\textbf{\textit{D}} = \{(x_i,y_i),...,(x_k,y_k)\},$
+$x_{t+1} = x_t - \alpha_t \nabla F(x_t) $
 \end{center}
-where $(x_i,y_i)$ are individual samples. The network takes the input samples and performs a number of sequential operations to create output estimates, denoted by $\hat y_i$. During the training phase of a neural network, the objective function to be minimized is the derived cost function, $J$, which is remapped to create the loss function $L$, which is dependent on the weights/parameters of the network, $w_i$, as well as $x_i$ (the inputs), $\hat y_i$ (the outputs), and $y_i$ (the correct labels). Thus, training of a neural network can be represented as the optimization problem:
-
+where $F(x_t)$ is the function to be minimized and $\alpha_t$ is the step length. Thus, the next chosen point, $x_{t+1}$, is found by moving in the direction of the negative gradient. In application to neural networks, the function $F(x_t)$ is known as the loss function, and the gradient of this loss function is used to update its layer weights, $w_i$. These layer weights are used to then predict outputs. The loss function is typically in the form of $L(w_i,x_i,y_i,\hat y_i)$, where $(x_i,y_i)$ are individual training samples (input and output), and $\hat y_i$ is the neural networks prediction from the training input. These training samples are taken from a set of training data, $\textbf{\textit{D}}$, where
+\begin{center}
+$\textbf{\textit{D}} = \{(x_i,y_i),...,(x_k,y_k)\}$
+\end{center}
+and the objective function is in the form:
 \begin{center}
 $\min\limits_{x_i \in X} L(w_i,x_i,y_i,\hat y_i)$
 \end{center}
-
-Since the objective function shown above is typically non-convex and can have many pseudo-optimal solutions, direct solutions of the cost function are not feasible. Instead, gradient descent algorithms are used to find these locally minimizing set of parameters using the training data and the corresponding cost/loss function.
-
-In any gradient descent algorithm, a random (or predetermined) initial point, $x_0$, is chosen and then each subsequent value $x_{t+1}$ is determined with the following general updating rule:
+Since the objective function shown above is typically non-convex and can have many pseudo-optimal solutions, direct solutions of the cost function are not feasible. Instead, gradient descent algorithms can be used to find a set of optimal parameters for this minimization problem, where an initial set of weights, $w_0$ are chosen and the update rule becomes:
 \begin{center}
-$x_{t+1} = x_t - \eta_t \nabla L_t(w_i,x_i,y_i,\hat y_i) $
-\end{center} 
-where $\eta_t$ is step length (learning rate), and $\nabla L_t$ is gradient at the current time step. Different algorithms incorporate more variables and calculations into this update step, and/or can add more normalization steps in between updates.
+$x_{t+1} = x_t - \eta_t \nabla L_t(w_i,x_i,y_i,\hat y_i)$
+\end{center}
+where $\eta_t$ is step length (called the learning rate), and $\nabla L_t$ is gradient at the current time step. This update rule is very simplistic though, and in practical usage a more complicated function, known as an optimizer, is typically used to improve the efficacy of these update steps.
 
 \subsubsection{SGD Algorithm}
-
-The SGD algorithm is one of the most common (and basic) gradient descent algorithms used in the neural network training. The adapted algorithm for mini-batches is as follows:
+The SGD algorithm is one of the most common (and basic) gradient descent algorithms used in neural network training. The adapted algorithm for mini-batches is as follows:
 \vspace{14pt}
 \begin{minipage}[b]{.48\textwidth}
 \begin{algorithm}[H]\small
-	\caption{$Mini-batch\:SGD$ \cite{SGD}}
+	\caption{SGD \cite{SGD}}
 	\label{alg:SGD}
 	\begin{algorithmic}
-		\STATE {\bfseries Input:} $x_i \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, mini-batch size $B$, $\epsilon>0$
-		\vspace{2pt}
-		\FOR{$t=1$ {\bfseries to} $T$}
-		\vspace{2pt}
-		\STATE $G^{(t)}\coloneqq 0$
-		\vspace{2pt}
-		\FOR{$k=1,...,B$}
-		    \vspace{2pt}
-		    \STATE Randomly sample point $(\tilde x_k,\tilde y_k)$ from \textbf{\textit{D}}
-		    \vspace{2pt}
-		    \STATE Compute $\hat y_k$ from current network weights, $w_t$
-		    \vspace{2pt}
-		    \STATE $G^{(t)}\leftarrow G_k^{(t)} + \frac{1}{B}\nabla L(w_t,\tilde x_{k},\tilde y_k,\hat y_k)$
-		    \vspace{4pt}
-		\ENDFOR
-		\vspace{2pt}
-		\STATE $w_{t+1} = w_{t} + \eta_t (G^{(t)} + \epsilon)$
+		\STATE {\bfseries Input:} Training samples: \textbf{\textit{X}} \subset $\{x_t\}_{t=1}^T$, $x_t \in \mathbb{R}^d$, $\{\eta_t\}_{t=1}^T$, $\epsilon>0$
 		\vspace{4pt}
+		\FOR{$t=1,...,T$}
+		    \vspace{3pt}
+		    \STATE Randomly sample point $(x_t,y_t)$ from \textbf{\textit{X}}
+		    \vspace{3pt}
+		    \STATE Compute $\hat y_t$ from current network weights, $w_t$
+		    \vspace{3pt}
+		    \STATE Compute $\nabla L_t(w_t,\tilde x_{k},\tilde y_k,\hat y_k)$
+		    \vspace{3pt}
+		    \STATE $w_{t+1}^{(i)} = w_{t}^{(i)} + \eta_t (\nabla L_{t}^{(i)} + \epsilon) \: \forall  i$
+		\vspace{3pt}
 		\ENDFOR
 	\end{algorithmic}
 \end{algorithm}
 \end{minipage}\hfill
 \vspace{-8pt}
+In the update step, the $i$ superscript signifies the operation is performed individually across all layer weights in the model. The addition of the extra hyperparameter $\epsilon$ is a small number chosen to prevent updates of zero magnitude.
 
-In summary, the mini-batch SGD algorithm states that for every mini-batch (from $1,...,\textit{T}$), the gradient of the loss function will be summed and averaged for each individual sample, $(\tilde x_k,\tilde y_k)$, and the resulting update value $G^{(t)}$ will be used to update the current network weights, $w_i$. The advantage behind performing mini-batches as opposed to weight updates after individual samples is for two reasons:
+In summary, the SGD algorithm is similar to the vanilla GD algorithm outline before, except that the order of the input training data is randomly selected. A popular extension of this algorithm is to delay the update to the weights by averaging the loss function calculation across several training sample, in a process called mini-batch training. The advantage behind performing mini-batches as opposed to weight updates after individual samples is for two reasons:
 \vspace{4pt}
 \begin{enumerate}
-    \item Averaging the gradient across samples has been shown to lower the chances of over-fitting[]
-    \item Weight-updates can be performed in a parallel / asynchronous setting, where work can be distributed across individual processors and summed at the end
+    \item Averaging the gradient across samples has been shown to lower the chances of over-fitting. \cite{Masters2018RevisitingSB}
+    \item Weight-updates can be performed in a parallel / asynchronous setting, where work can be distributed across individual processors and summed at the end. This is because weight-updates are performed after several samples have been run, instead of after each sample.
 \end{enumerate}
 \vspace{3pt}
 
-Mini-batch SGD has been shown to easily converge many moderately sized neural networks, but fails when the network becomes large or when there is large variance sample to sample.
+Mini-batch SGD has been shown to easily converge many moderately sized neural networks, but proves to be less than optimal when the network becomes large or when there is large variance sample to sample. Any other gradient descent-based algorithm can implement this strategy, and it is so widely used in practice that going forward it will be assumed that all other optimizers are implemented in a "mini-batch" fashion.
 \subsubsection{LARS optimizer}
 
-The LARS optimizer (short for Layer-wise Adaptive Rate Scaling), developed and outlined by \_ in \cite{ginsburg2018large}, improves upon the previous SGD algorithm by scaling learning rate across individual layers. You et al. found that the ratio of $||w_t||$ ($l_2$ norm of the current weights) to $||g_t||$ (the gradient at the current time step) varied tremendously from the initial to final layers. They propose that scaling the learning rate $\eta_t$ by a second parameter called the "trust" or "lars" coefficient and by the ratio $\frac{||w_t||}{||\nabla L(w_t^l)||}$, training should substantially improve for deep neural networks. They proved this was the case for the ResNet-50 model even when trained with extremely large batch sizes (greater than 32k)\cite{ginsburg2018large}. An outline of the algorithm in the case of SGD with LARS and momentum is as follows:
+The LARS optimizer (short for Layer-wise Adaptive Rate Scaling), developed and outlined by You et al. in \cite{ginsburg2018large}, improves upon the previous SGD algorithm by introducing a normalization calculation done on each update step. This normalization involves scaling the effective learning rate with respect to the individual neural network layers. They found that the ratio of $||w_t^{(l)}||$ ($l_2$ norm of the current weights at layer $l$) to $||L_t^{(l)}||$ ($l_2$ norm of the loss function at layer $l$) varied tremendously from the initial to final layers. They proposed a singular addition to traditional gradient descent: scale the learning rate $\eta_t$ by a second parameter called the "trust" or "lars" coefficient ($\gamma$) and by the ratio $\frac{||w_t^{(l)}||}{||\nabla L(w_t^{(l)})||}$. They hypothesized that training would substantially improve for deep neural networks due to the extra normalization. They proved this was the case for the ResNet-50 model even when trained with extremely large batch sizes (greater than 32k)\cite{ginsburg2018large}. This holds large relevance as being able to increase the batch size allows for more parallel/distributed training, better utilizing larger amounts of computing ability. An outline of the algorithm in the case of SGD with LARS is as follows:
 \begin{minipage}[b]{.48\textwidth}
 \begin{algorithm}[H]\small
-	\caption{SGD with LARS and momentum \cite{ginsburg2018large}}
+	\caption{SGD with LARS \cite{ginsburg2018large}}
 	\label{alg:lars}
 	\begin{algorithmic}
 	    \vspace{3pt}
-		\STATE {\bfseries Input:} $x_i \in \mathbb{R}^d$, learning rate $\{\gamma_t\}_{t=1}^T$, $0 < \beta_{1} < 1$ (momentum scaling), LARS coefficient $\eta <1$
+		\STATE {\bfseries Input:}Training samples: \textbf{\textit{X}} \subset $\{x_t\}_{t=1}^T$, $x_t \in \mathbb{R}^d$, $\{\eta_t\}_{t=1}^T$, $\epsilon>0$
+		$x_i \in \mathbb{R}^d$, LARS coefficient $\gamma <1$
+		\vspace{4pt}
+		\FOR{$t=1,..., T$}
 		\vspace{3pt}
-		\STATE $m_{0} = 0$ (initial momentum term to zero)
-		\FOR{$t=1$ {\bfseries to} $T$}
-		\vspace{2pt}
-		\STATE Randomly sample point $(\tilde x_k,\tilde y_k)$ from \textbf{\textit{D}}
-% 		\STATE Draw b samples $S_t$ from $\mathbb{P}$
+		    \STATE Randomly sample point $(x_t,y_t)$ from \textbf{\textit{X}}
+		    \vspace{3pt}
+		    \STATE Compute $\hat y_t$ from current network weights, $w_t$
+		    \vspace{3pt}
+		    \STATE Compute $\nabla L_t(w_t, x_{k}, y_k,\hat y_k)$
+		    \vspace{3pt}
+        \STATE $\lambda_t^l \gets \frac{||w_t^l||}{||\nabla L(w_t^l)||}$ (local LR across each layer $l$)
         \vspace{3pt}
-		\STATE $\hat y_k$ (from current network weights, $w_t$)
-		\vspace{2pt}
-        \STATE $\nabla L(w_t^l,\tilde x_k,\tilde y_k,\hat y_k)$ (gradient at each layer)
-        % = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$
-        \vspace{3pt}
-        \STATE $\lambda^l \gets \frac{||w_t^l||}{||\nabla L(w_t^l)||}$ (local LR)
-        \vspace{3pt}
-        
-        \STATE $v_{t} = \beta v_{t-1} + \gamma_t\eta(1 - \beta)\lambda^l\nabla L(w_t^l)$ (momentum calculation)
+		    \STATE $w_{t+1}^{l} = w_{t}^{l} + \eta_t \gamma_t \lambda_t^l(\nabla L_{t}^{l} + \epsilon) \: \forall  l$
+        % \STATE $v_{t} = \beta v_{t-1} + \gamma_t\eta(1 - \beta)\lambda^l\nabla L(w_t^l)$ (momentum calculation)
 % 		\STATE $v_{t+1}^l = \eta_t  ||w_t^{(i)}||\frac{m_t^{(i)}}{\|m_t^{(i)}\|} $ for all $i \in [h]$
-        \vspace{3pt}
-		\STATE $w_{t+1} = w_{t} - v_t$ (update weights)
+%         \vspace{3pt}
+% 		\STATE $w_{t+1} = w_{t} - v_t$ (update weights)
 		\vspace{3pt}
+		
 		\ENDFOR
 	\end{algorithmic}
 \end{algorithm}
@@ -120,14 +103,14 @@ The LARS optimizer (short for Layer-wise Adaptive Rate Scaling), developed and o
 %  \caption{Mini-batch SGD with LARS. Example with momentum\label{algo:lars}}
 % \end{algorithm}
 
-It is important to note that there are two key differences between this implementation and traditional SGD with momentum:
+Weight updates are still also performed across each individual weight, $w_i$, but this superscript was left out for sake of simplicity. It is important to note that there are two key differences between this implementation and traditional SGD:
 \begin{enumerate}
     \item The learning rate is now parameterized by the layer number, $l$
-    \item The calculation of the trust coefficient, $\lambda^l$, is scaled by the LARS coefficient, $\eta$, to apply different magnitudes of LR scaling for each layer
+    \item The calculation of the trust coefficient, $\lambda^l_t$, is scaled by the LARS coefficient, $\eta$, to apply different magnitudes of LR scaling
 \end{enumerate}
 \vspace{4pt}
 
-It can be deduced that dividing by the $l_2$ norms of the loss function and weight vector is effectively normalizing the magnitude of the update step. In practice, this means that only the direction of the gradient is taken into consideration for each update step. It is assumed that this layer-wise normalization allow for deep networks to be trained for higher numbers of iterations with a less likelihood of over-fitting. When applied to the mini-batch case, gradient updates are performed in the same manner, where the gradient updates at each mini-batch are averaged to make a singular update. 
+It can be deduced that the performance benefit seen by You et al. was from the normalization of the magnitude of the update step with respect to the layers. In practice, this means that only the direction of the gradient and the current magnitude of the weights is taken into consideration for each update step. It is assumed that this layer-wise normalization allow for deep networks to be trained for higher numbers of iterations with a less likelihood of over-fitting. When applied to the mini-batch case, gradient updates are performed in the same manner, where the gradient updates at each mini-batch are averaged to make a singular update. 
 
 \subsubsection{ADAM optimizer}
 Although LARS makes many improvements to traditional SGD algorithms, it still does not incorporate higher-order terms that could benefit each update step. The ADAM optimizer, created by  in \cite{adam}, enhances regular gradient descent algorithms through the addition of two terms and two hyperparameters:
@@ -151,63 +134,78 @@ The addition of these two terms comes from the calculation of the expected value
 	\caption{ADAM \cite{adam}}
 	\label{alg:adam}
 	\begin{algorithmic}
-		\STATE {\bfseries Input:} $x_i \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter $\beta_{1},\beta_{2} \in [0,1)$,  $\epsilon > 0$
+% 		\STATE {\bfseries Input:} $x_i \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$, parameter,  $\epsilon > 0$
+		\STATE {\bfseries Input:} Training samples: \textbf{\textit{X}} \subset $\{x_t\}_{t=1}^T$, $x_t \in \mathbb{R}^d$, $\{\eta_t\}_{t=1}^T$, $\epsilon>0$,  $\beta_{1},\beta_{2} \in [0,1)$
+		\vspace{3pt}
 		\STATE Initialize $m_{0} = 0, v_{0} = 0$
-		\FOR{$t=1$ {\bfseries to} $T$}
-		\vspace{2pt}
-		\STATE Randomly sample point $(\tilde x_k,\tilde y_k)$ from \textbf{\textit{D}}
-		\vspace{2pt}
-		\STATE Compute $\hat y_k$ from current network weights, $w_t$
-		\vspace{2pt}
-		\STATE $g_{t} = \nabla L(w_t,\tilde x_{k},\tilde y_k,\hat y_k)$
-		\vspace{2pt}
-        \STATE $m_{t} = \beta_{1}m_{t-1}+(1-\beta_{1})g_{t}$
-        \vspace{2pt}
-        \STATE $v_{t} = \beta_{2}v_{t-1}+(1-\beta_{2})g_{t}^2$
-        \vspace{2pt}
+		\FOR{$t=1,...,T$}
+		\vspace{3pt}
+		\STATE Randomly sample point $(x_t,y_t)$ from \textbf{\textit{X}}
+		\vspace{3pt}
+		\STATE Compute $\hat y_t$ from current network weights, $w_t$
+		\vspace{3pt}
+		\STATE Compute $\nabla L_t(w_t, x_{t}, y_t,\hat y_t)$
+		\vspace{3pt}
+        \STATE $m_{t} = \beta_{1}m_{t-1}+(1-\beta_{1})\nabla L_t$
+        \vspace{3pt}
+        \STATE $v_{t} = \beta_{2}v_{t-1}+(1-\beta_{2})\nabla L_t^2$
+        \vspace{3pt}
         \STATE $\hat{m}_{t}={m_t}/(1-\beta_1^t)$
-        \vspace{2pt}
+        \vspace{3pt}
         \STATE $\hat{v}_{t}={v_t}/(1-\beta_2^t)$
         \vspace{2pt}
         \STATE $w_{t+1} = w_{t}-\eta_t\frac{\hat{m}_t}{\hat{v}_t+\epsilon}$
-        \vspace{2pt}
+        \vspace{3pt}
 		\ENDFOR
 	\end{algorithmic}
 \end{algorithm}
 \end{minipage}\hfill%
 
+The value calculated at the end in the form of $\frac{\hat{m}_t}{\hat{v}_t+\epsilon}$ is also known as the Adam norm. Typical values for $b_1$ and $b_2$ are 0.9 and 0.999 \cite{adam}, which are shown to work effectively across all use cases.
+
 \subsubsection{LAMB optimizer}
 
-The LAMB algorithm, developed by \_ in \cite{You2020Large} uses ADAM as the base algorithm, by applies the same layer-wise normalization that LARS implements. More specifically, it makes the following adjustments:
+The LAMB algorithm, developed by You et al. in \cite{You2020Large} uses ADAM as the base algorithm, and applies the same layer-wise normalization that LARS implements. More specifically, it makes the following adjustments:
 \begin{enumerate}
-    \item Using the square root of second moment for normalization
-    \item Adopting layer-wise normalization
+    \item Use the square root of second moment, $\hat v_t$ for normalization and calculation of the Adam norm.
+    \item Adopt a parameterization function of the inputs, $\phi(||w_t^{(l)}||)$, for layer-wise normalization
 \end{enumerate}
+
+The algorithm is as follows:
 \begin{minipage}[b]{.5\textwidth}
 \begin{algorithm}[H]\small
 	\caption{$LAMB$ \cite{You2020Large}}
 	\label{alg:lamb}
 	\begin{algorithmic}
-		\STATE {\bf Input:} $x_1 \in \mathbb{R}^d$, learning rate $\{\eta_t\}_{t=1}^T$,  parameters $0 < \beta_{1}, \beta_2 < 1$, scaling function $\phi$, $\epsilon > 0$
+		\STATE {\bf Input:}  Training samples: \textbf{\textit{X}} \subset $\{x_t\}_{t=1}^T$, $x_t \in \mathbb{R}^d$, $\{\eta_t\}_{t=1}^T$, $\epsilon>0$,  $\beta_{1},\beta_{2} \in [0,1)$, scaling function $\phi(w_t)$
+		\vspace{3pt}
 		\STATE Set $m_{0} = 0$, $v_{0} = 0$
-		\FOR{$t=1$ {\bf to} $T$}
-		\STATE Draw b samples $S_t$ from $\mathbb{P}$.
-        \STATE Compute $g_t = \frac{1}{|\mathcal{S}_t|} \sum_{s_t \in \mathcal{S}_t}\nabla \ell(x_t, s_t)$.
-		\STATE  $m_{t} = \beta_{1} m_{t-1} + (1 - \beta_{1}) g_{t}$ 
-		\STATE  $v_{t} = \beta_{2} v_{t-1} + (1 - \beta_{2}) g_{t}^2$
-		\STATE $m_t = m_t/(1 - {\beta}_1^t)$ 
-        \STATE $v_t = v_t/(1 - {\beta}_2^t)$
-		\STATE Compute ratio $r_t = \frac{m_t}{\sqrt{v_t} + \epsilon}$
-		\STATE $x_{t+1}^{(i)} = x_{t}^{(i)} - \eta_t \frac{\phi(\|x_t^{(i)}\|)}{\|r_t^{(i)} + \lambda x_t^{(i)}\|} (r_t^{(i)} + \lambda x_t^{(i)})$
+		\vspace{3pt}
+		\FOR{$t=1,...,T$}
+		\STATE Randomly sample point $(x_t,y_t)$ from \textbf{\textit{X}}
+		\vspace{3pt}
+		\STATE Compute $\hat y_t$ from current network weights, $w_t$
+		\vspace{3pt}
+		\STATE Compute $\nabla L_t(w_t, x_{t}, y_t,\hat y_t)$
+		\vspace{3pt}
+		\STATE $m_{t} = \beta_{1}m_{t-1}+(1-\beta_{1})\nabla L_t$
+        \vspace{3pt}
+        \STATE $v_{t} = \beta_{2}v_{t-1}+(1-\beta_{2})\nabla L_t^2$
+        \vspace{3pt}
+        \STATE $\hat{m}_{t}={m_t}/(1-\beta_1^t)$
+        \vspace{3pt}
+        \STATE $\hat{v}_{t}={v_t}/(1-\beta_2^t)$
+        \vspace{3pt}
+		\STATE Compute trust ratio $r_t = \frac{m_t}{\sqrt{v_t} + \epsilon}$
+		\vspace{3pt}
+		\STATE $w_{t+1}^{(l)} = w_{t}^{(l)} - \eta_t \frac{\phi||w_t^{(l)}||)}{||r_t^{(l)} + \lambda w_t^{(l)}||} (r_t^{(l)} + \lambda w_t^{(l)})$
 		\ENDFOR
 	\end{algorithmic}
 \end{algorithm}
 \end{minipage}
 
+Choices for the parameterization function $\phi$ can include a simple $\phi(z) = z$, or can be more complex and perform ceiling/floor operations. You et al. found that either of these choices resulted in similar performance\cite{You2020Large}. The inclusion of layer-based scaling should allow for the ability to perform larger batch sizes with minimal negative effect (similar to LARS). The inclusion of moment calculations should allow for much faster minima convergence, as shown by previous researchers with the advent of Adam \cite{adam}. It is hypothesized that the pairing of these two greatly improves upon the traditional LARS + SGD approach mentioned previous in terms of training speed and efficiency. 
 \subsection{Study Cases' Models}
-
-
-
 
 \subsubsection{Image Classification}
 
@@ -231,12 +229,14 @@ Note there is only one term in the loss function per data, which is the negative
 
 The model employed for QA understanding system here is called Document retriever Question Answering (DrQA) as illustrated in Figure~\ref{fig:DrQA}.  Starting from the top:
 \begin{enumerate}[start=1,label={\bfseries\arabic*:}]
-    \item According to Lee et al. \cite{Lee}, the questions and context can be aligned to build respective embedding of: 
+    \item According to Lee et al. \cite{Lee}, the questions and context can be aligned to build respective embedding of:     \vspace{5pt}
+
     \begin{center} $f_{align} = \sum_j \alpha_{i, j} E(q_j)$. \end{center}
-    
+    \vspace{5pt}
     Where $\alpha$ is single dense layer with relu non-linearity and $E()$ represents the glove embeddings. This layer help initialize what portion of the context is more important or relevant with respect to the question.
     
     \item In order to understand the representation of these glove and aligned paragraphs, these are passed to stacked bi-LSTM \cite{biLSTM}. LSTM is expressed as: 
+    \vspace{5pt}
     \begin{center}
     $u_t = \sigma(W_u x_t + U_u h_{t-1} + b_u)$ \\
     $f_t = \sigma(W_f x_t + U_f h_{t-1} + b_f)$  \\
@@ -245,15 +245,21 @@ The model employed for QA understanding system here is called Document retriever
     $c_t = f_t c_{t-1} + u_t g_t$ \\
     $h_t = o_t tanh(c_t)$
     \end{center}
-    
+        \vspace{5pt}
+
     where $u, f, g, o$ are  respectively update/input, forget, cell, and output gates. $c_t$ is the cell at time $t$ and $\sigma(\cdot)$ is the sigmoid function. 
     
     \item Then the importance of each word in the question is calculated through Linear Attention layer as $b$ below with $w$ as a trainable weight vector:
+        \vspace{5pt}
+
     \begin{center} 
     $b_j = \frac{e^{w \cdot q_j}}{\sum_{j'}e^{w\cdot q_{j'}}}$
     \end{center}
-    
+        \vspace{5pt}
+
     \item Finally, to predict the accurate answer's span tokens, there are two bilinear classifiers to respectively predict the probabilities of start and end tokens of the span: 
+        \vspace{5pt}
+
     \begin{center} 
     $P_{start}(i) \propto e^{p_iW_sq}$ \\
     $P_{end}(i) \propto e^{p_iW_eq}$
@@ -266,7 +272,7 @@ The model employed for QA understanding system here is called Document retriever
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{img/DrQA.png}
-    \caption{Document Reader model architecture part of DrQA \cite{DrQA}}
+    \caption{Document Reader model architecture part of DrQA \cite{DrQA, drqa_architecture}}
     \label{fig:DrQA}
 \end{figure}
 
@@ -291,14 +297,18 @@ The model is a variant of the Deep Speech 2 model with the aid of Residual CNN (
 
 \begin{enumerate}[start=1,label={\bfseries \arabic*:}]
     \item Residual network consists of stacked ``residual units'' inspired by He et al. \cite{resnet} but with layer norm to learn the audio features expressed as:
+        \vspace{5pt}
+
     \begin{center}
     $x_{l + 1} = ReLU(h(x_l) + F(x_l, W_l))$ \\
     \end{center}
+    \vspace{5pt}
     
     \item A fully connected layer to compress the model representation before passing it over. 
     
     \item Bidirectional GRU-RNN \cite{biGRURNN} is then utilized to leverage the features to learn the representation of the audio's spectrogram frames before the current step and after it as well. 
-    
+        \vspace{5pt}
+
     \begin{center}
     
     $u_t &= \sigma(W_u x_t + U_u h_{t-1} + b_u)$ \\
@@ -307,18 +317,21 @@ The model is a variant of the Deep Speech 2 model with the aid of Residual CNN (
     $h_t &= (1 - u_t) h_{t-1} + u_t \tilde{h}_t$
 
     \end{center}
-    
+        \vspace{5pt}
+
     $u$ and $r$ represent the \emph{update} and \emph{reset} gates respectively. This is slightly different from the standard GRU in that the hidden state $h_{t-1}$ is multiplied by $U_h$ prior to scaling by the reset gate. This allows for all operations on $h_{t-1}$ to be computed in a single matrix multiplication. Moreover, Amodei et al. \cite{Amodei} found similar performance for $tanh$ and clipped-ReLU for nonlinear transformation so clipped-ReLU \cite{clippedReLU} is picked for simplicity and uniformity with the rest of the network.
 
     
     \item A final fully connected layer takes the inputs from the feature analysis and applies weights to predict the correct label.
     
     \item A Gaussian Error Linear Unit (GELU) activation layer as: 
-    
+        \vspace{5pt}
+
     \begin{center}
     $GELU(x) = xP(X \leq x) = x \cdot \frac{1}{2} [1 + erf(\frac{x}{\sqrt{2}}]$
     \end{center}
-    
+        \vspace{5pt}
+
     \item A linear layer to map the results to final probabilities for each mapping of corresponding letters or symbols. 
     
 \end{enumerate}

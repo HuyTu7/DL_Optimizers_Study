@@ -1,20 +1,12 @@
 \subsection{Evaluation Bias}
 
-This paper employed the accuracy for image classification loss, perplexity for question answering, and text to speech. There are other evaluation scores that could be applied to this kind of analysis
+This paper employed accuracy in respects to cross-entropy loss for question answering and image classification with CTC loss \cite{}. There are other evaluation scores that could be applied to this kind of analysis
 and, in the future, it would be useful to test in the central claim of this paper holds for more than the aforementioned ones.
 
 \subsection{Learner Bias}
 
-This study utilized LSTMs layers for question answering system, CNN for image classifications, and ResNet for speech to text task. 
-The case was made in \S4.4 that this represents an interesting range of current problem domains.
-Nevertheless, it might be useful in future work to test if the central claim of this paper 
-hold across multiple up-to-date models (e.g. transformers) across several domains.
+This study utilized DrQA (attention based LSTMs) model for the question answering system, a basic CNN model for image classification, and a model based on Deep Speech 2 for the speech-to-text task. The case was made in \S4.4 that this represents an interesting range of current problem domains. Nevertheless, it might be useful in future work to test if the central claim of this paper hold across multiple up-to-date models (e.g. transformers) across several domains.
 
 \subsection{Sampling Bias}
 
-Like any data mining paper,
-our work is threatened by sampling bias; i.e. what holds for the data we studied here may
-not hold for other kinds of data. 
-Within the space of one paper, it is hard to avoid sampling bias.
-However, what researchers can do is make all their scripts and data available
-such that other researchers can test their conclusions whenever new data becomes available. To that end, we have made all our scripts and data available at github.com/HuyTu7/dl\_optimizers.
+Like any data mining paper, our work is threatened by sampling bias; i.e. what holds for the data we studied here may not hold for other kinds of data.  Within the space of one paper, it is hard to avoid all sampling bias. However, what researchers can do is make all their scripts and data available such that other researchers can test their conclusions whenever new data becomes available. To that end, we have made all our scripts and data available at github.com/HuyTu7/dl\_optimizers.

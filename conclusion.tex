@@ -1,0 +1,14 @@
+This paper have investigated the effectiveness of LARS and LAMB across multiple machine learning domains (NLP, CV, and Speech), model sizes (a median of 13 million parameters), and batch sizes (8 - 8K) to find that:  
+
+\begin{enumerate}
+    \item The results of You et al. is reproducible and validated through  one of the initial domains tested by You et al.  \cite{You2020Large} (image classification in section V.A). Yet, LARS surprisingly underperformed SGD even with large batch sizes.
+    \item Layer-wise optimization techniques (LARS and LAMB) on smaller batch sizes training do not work as well as traditional optimizers (Adam and SGD). 
+\end{enumerate}
+
+However, there are two possible explanations for the negative results of the layer-wise optimizers (LAMB and LARS) on the two case studies performed in the scope of this paper (QA System and Speech to Text), which include: 
+\begin{itemize}
+    \item The batch sizes tested in the QA system were statistically small in comparison to most literature (which reported sizes of 8K and up to 64K)
+    \item Through the training plots (for QA System and Speech to Text), we observe that Adam over-fitted a lot more quickly (within 10 epochs) and triggered the early stop procedure, while the other algorithms did not. At the same time, LAMB converged very slowly and it can easily be deduced that a longer training time would allow for an even lower test loss value than ADAM ever could reach.
+    \item The learning rate had a large effect on the overall performance of all the layer-wise adaptive models, and more testing should be performed across a range of learning rates to create a better control environment.
+\end{itemize}
+

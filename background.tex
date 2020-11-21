@@ -17,10 +17,11 @@ model with batch $B=6400$, and Li (2017) trained Resnet-152 for $B=5K$. Two main
 
 
 
-You et al. (2017) proposed a new training algorithm of LARS to solve this problem. The intuition is to adapt the learning rate on each layers that is SG based. Using the LARS algorithm, the Alexnet can be trained with a batch size of 8k and Resnet-50 can be trained with a batch size of 32k without loss in accuracy. However, LARS performs poorly for attention models like BERT. 
+You et al. (2017) \cite{ginsburg2018large} proposed a new training algorithm of Layer-wise Adaptive
+Rate Scaling (LARS) to solve this problem. The intuition is to adapt the learning rate on each layers that is SG based. Using the LARS algorithm, the Alexnet can be trained with a batch size of 8k and Resnet-50 can be trained with a batch size of 32k without loss in accuracy. However, LARS performs poorly for attention models like BERT. 
 
 
-Inspired by LARS, You et al. (2019) developed a new optimization algorithm Layer-wise Adaptive Moments optimizer for Batch training (LAMB) especially for large batch size training. The adaptivity of LAMB are different from LARS in two parts: (1) parameter normalization based on the square root of the second moment in Adam; and (2) layer-wise adaptive normalization. The author reported that by training the BERT language model with LAMB optimizer can drastically reduce the training time from 3 days to 76 minutes without the reduction of performance.
+Inspired by LARS, You et al. (2019) developed a new optimization algorithm Layer-wise Adaptive Moments optimizer for Batch training (LAMB) especially for large batch size training. The adaptivity of LAMB are different from LARS in two parts: (1) parameter normalization based on the square root of the second moment in Adam; and (2) layer-wise adaptive normalization. The author reported that by training the BERT language model with LAMB optimizer can drastically reduce the training time from 3 days to 76 minutes without the reduction of performance in a batch size of 64K. This holds massive significance in the field of machine learning as the training of the model was able to be distributed among several hundred more processors in a parallel setting. This type of feat is not possible with the smaller batch size initially used to produce the production model of BERT.
 
 \subsection{Case Studies}
 
@@ -35,7 +36,7 @@ Inspired by LARS, You et al. (2019) developed a new optimization algorithm Layer
     \vspace{-10pt}
 \end{figure}
 
-One of the classical task over the past 10 years in the machine learning community is image classification with the proposal of many new models and the creation of benchmark datasets. For instance, this study focuses on handwritten digit recognition or optimal character recognition (OCR) of MNIST database by LeCun et al. \cite{LeCun}. Before the advancement of GPU is 2012, traditional machine learning approaches have served as the baseline for this OCR task tested on MNIST database including K-Nearest Neighbor, ensemble-based classifiers, and Support Vector Machine. After 2012, Convolutional Neural Network (CNN) emerged and served as the new baseline for this benchmark dataset in OCR task.
+One of the classical task over the past 10 years in the machine learning community is image classification with the proposal of many new models and the creation of benchmark datasets. For instance, this study focuses on handwritten digit recognition or optimal character recognition (OCR) of MNIST database by LeCun et al. \cite{1989Lecun}. Before the advancement of GPU is 2012, traditional machine learning approaches have served as the baseline for this OCR task tested on MNIST database including K-Nearest Neighbor, ensemble-based classifiers, and Support Vector Machine. After 2012, Convolutional Neural Network (CNN) emerged and served as the new baseline for this benchmark dataset in OCR task.
 The traditional CNN model, where the earliest date can be traced back
 to the 1986 Back Propagation algorithm \cite{BP}. Then in 1989 LeCun used it
 in multi-layer neural networks \cite{1989Lecun} which is then extended to LeNet-5 model in 1998. The CNN's architecture allows take advantage of the
@@ -43,16 +44,10 @@ two dimensional structure of the input data in order to capture a deeper underst
 
 
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=\linewidth]{img/QA.png}
-    \caption{An overview of the question answering system DrQA \cite{DrQA}.}
-    \label{fig:DrQA_overview}
-    \vspace{-10pt}
-\end{figure}
 
 
 
+\vspace{2pt}
 \subsubsection{NLP - Question Answering System}
 
 The NLP specific task we picked for this paper is open-domain QA originally rooted in finding answers in collections of unstructured documents following the annual Text REtrieval Conference competitions (TREC\footnote{https://trec.nist.gov/data/qamain.html}). First, the development of Knowledge Base (KBs) have pushed a lot of resources creation like WebQuestion \cite{webquestion} and SimpleQuestion \cite{simplequestion} or automated extracted KBs like NELL \cite{KBNELL}. Yet, KBs have inherent nature that limiting these work including fixed schemas and incompleteness. Therefore, researchers have to return to the original setting of answering from raw text. 
@@ -64,14 +59,20 @@ Secondly, it is a distinct subfield of machine comprehension of text. With the a
 
 Other previous researchers also considered other resources of semi-structured knowledge such as infoboxes, article structure, category structure, and definitions \cite{Ryu}. Yet, this QA system only consider the comprehension of text only, or relying on a single resource.
     
-    
+    \begin{figure}[!t]
+    \centering
+    \includegraphics[width=\linewidth]{img/QA.png}
+    \vspace{10pt}
+    \caption{An overview of the question answering system DrQA \cite{DrQA}.}
+    \label{fig:DrQA_overview}
+\end{figure}
 
 
 
 
 
 
-Therefore, this study focused on the inspired Document retriever Question Answering (DrQA) similar to Figure \ref{fig:DrQA_overview}. As the name suggested, it composed of (1) Document Retriever and (2) Document Reader where for this study's purpose of model's optimization will not consider part 1 of the system and solely focus on part 2. Specifically, for Document
+Therefore, this study focused on the inspired Document retriever Question Answering (DrQA) similar to Figure \ref{fig:DrQA_overview}. As the name suggested, it composed of (1) Document Retriever a module using bigram hashing and TF-IDF matching for retrieving relevant context according to the question and (2) Document Reader which is NN based to understand the question and context appropriately to localize the answer within the context. However, since this study's purpose to optimize model is only beneficial for NN architecture based models, the first part of the system will be neglected and solely focus on the second part. Specifically, for Document
 Reader, a multi-layer recurrent neural network
 machine comprehension model trained to detect
 answer spans in those defined context.
@@ -87,7 +88,7 @@ state of the art speech work containing some form of deep neural network \cite{D
 neural networks (typically LSTMs), are beginning to be adapted in state-of-the art recognizers \cite{recognizers} that thrive on convolutional layers for the feature extraction \cite{featextr}. World-wide recognized level of such models include Deep Speech by Baidu \cite{deepspeech} and Listen Attend Spell (LAS) by Google \cite{LAS}. We adapted a model that is similar to Deep Speech 2 architecture \cite{deepspeech} which utilized enhanced numerical optimization through SortaGrad and Batch normalization, RNNs evaluation with larger strides with bigram outputs, and searching through bidirectional and unidirectional models.
 
 
-\begin{figure}[!t]
+\begin{figure}[!b]
     \centering
     \includegraphics[width=\linewidth]{img/speech2text.jpg}
     \caption{An overview of Speech 2 Text end to end system}
